@@ -20,13 +20,22 @@ const asObject = anecdote => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-
   let newState = JSON.parse(JSON.stringify(state))
 
   switch (action.type) {
-    case 'NEW_ANECDOTE': return [...newState, action.payload]
+    case 'NEW_ANECDOTE': {
+
+      newState = [...newState, action.payload]
+      newState.sort((a, b) => {
+        const anecdote1 = a.content.toUpperCase(); // ignore upper and lowercase
+        const anecdote2 = b.content.toUpperCase(); // ignore upper and lowercase
+        if (anecdote1 < anecdote2) return -1;
+        if (anecdote1 > anecdote2) return 1;
+        return 0;
+      })
+      
+      return newState
+    }
     case 'VOTE': {
       const id = action.payload.id.id
       const anecdoteToChange = newState.find(n => n.id === id)
@@ -36,11 +45,19 @@ const reducer = (state = initialState, action) => {
         votes: anecdoteToChange.votes + 1
       }
       
-      console.log(action.payload.id)
       return newState.map(anecdote => (anecdote.id !== id ? anecdote : changedAnecdote))
     }
 
-    default: return newState
+    default: {
+      newState.sort((a, b) => {
+        const anecdote1 = a.content.toUpperCase(); // ignore upper and lowercase
+        const anecdote2 = b.content.toUpperCase(); // ignore upper and lowercase
+        if (anecdote1 < anecdote2) return -1;
+        if (anecdote1 > anecdote2) return 1;
+        return 0;
+      })
+      return newState
+    }
   }
 }
 
@@ -54,11 +71,11 @@ export const createAnecdote = aneContent => {
     }
   }
 }
-
+/*
 const checkId = (id1, id2) => {
   return id1 == id2
 }
-
+*/
 export const vote = id => {
   return {
     type: 'VOTE',

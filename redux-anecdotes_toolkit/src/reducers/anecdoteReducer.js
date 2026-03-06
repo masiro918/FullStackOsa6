@@ -38,7 +38,6 @@ const anecdoteSlice = createSlice({
     vote(state, action) {
       const id = action.payload
       const oldState = current(state)
-      //const anecdoteToChange = current(state).find(n => n.id === id)
       let anecdoteToChange = null;
       oldState.forEach(anecdote => {
         if (anecdote == id) anecdoteToChange = anecdote
@@ -52,9 +51,12 @@ const anecdoteSlice = createSlice({
       return current(state).map(anecdote =>
         anecdote !== id ? anecdote : votedAnecdote 
       )     
+    },
+    filterAnecdotes(state, action) {
+      return initialState
     }
   },
 })
 
-export const { createAnecdote, vote } = anecdoteSlice.actions
+export const { createAnecdote, vote, filter } = anecdoteSlice.actions
 export default anecdoteSlice.reducer
